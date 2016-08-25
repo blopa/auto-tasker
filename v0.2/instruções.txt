@@ -1,0 +1,18 @@
+Troque o texto "ID_DA_SUA_PLANILHA" pela ID da sua planilha.
+Exemplo:
+Se a URL da sua planilha for https://docs.google.com/spreadsheets/d/1f5KieKkkS6zg1JexS6zEE9Qq5UpobFWmydPpR6QP4Ss/edit#gid=0 a ID dela é 1f5KieKkkS6zg1JexS6zEE9Qq5UpobFWmydPpR6QP4Ss
+
+Faça uma cópia da planilha de exemplo e comece a colocar seus horários
+Planilha exemplo: https://docs.google.com/spreadsheets/d/1f5KieKkkS6zg1JexS6zEE9Qq5UpobFWmydPpR6QP4Ss/edit#gid=0
+
+Coluna Data: Coloque a data da atividade
+Coluna Horário: Coloque o horário de inicio da atividade
+Colunca Descrição: Coloque a descrição da atividade
+Coluna Atividade: Coloque o código do Tasker para a atividade
+
+Obs.: O código do Tasker "000000" é ignorado pelo script, e deve ser utilizado para atividades que não serão alocadas no Tasker, como saidas da empresa (sair pra almoçar ou ir pra casa).
+
+As atividades tem que ser cadastrada na planilha de cima pra baixo, ou seja, os primeiros horários devem aparecer mais embaixo da planilha, e ir subindo os horários mais tardios.
+
+
+Tudo que for adicionado embaixo da célula "!- ANTIGOS -!" será ignorado. Deixa em cima dela apenas os horários que ainda não foram alocados. O script não faz case de error, então caso tente adicionar um horário que já foi alocado, o script vai falhar.

@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+	<head>
+		<script type="text/javascript">
+			//debugger;
+		</script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<script type="text/javascript">
+		  var spData = null;
+		  function doData(json) {			  
+			  spData = json.feed.entry;
+			  //console.log(spData);
+		  }
+		  
+		  function drawCell(tr, val) {
+			  var td = $("<td/>");
+			  tr.append(td);
+			  td.append(val);
+			  //console.log(td);
+			  return td;
+		  }
+		  function drawRow(table, rowData) {
+			  if (rowData == null) return null;
+			  if (rowData.length == 0) return null;
+			  var tr = $("<tr/>");
+			  table.append(tr);
+			  for(var c=0; c<rowData.length; c++) {
+				  drawCell(tr, rowData[c]);
+			  }
+			  //console.log(tr);
+			  return tr;
+		  }
+		  
+		  function drawTable(parent) {
+			  var table = $("<table/>");
+			  parent.append(table);
+			  //console.log(table);
+			  return table;
+		  }
+		  
+		  function readData(parent) {
+			  var data = spData;
+			  var table = drawTable(parent);
+			  var rowData = [];
+			  
+			  for(var r=0; r<data.length; r++) {
+				  var cell = data[r]["gs$cell"];
+				  var val = cell["$t"];
+				  if (cell.col == 1) {
+					  drawRow(table, rowData);
+					  rowData = [];
+				  }
+				  rowData.push(val);
+			  }
+			  drawRow(table, rowData);
+		  }
+		  $(document).ready(function(){
+			  readData($("#data"));
+			  geraScript();
+		  });
+		</script>
+		<script src="https://spreadsheets.google.com/feeds/cells/ID_DA_SUA_PLANILHA/1/public/values?alt=json-in-script&callback=doData"></script>
+		<style type="text/css">
+			table {border-collapse: collapse; width: 50%;}
+			th, td {border: thin solid black; padding: 3px;}
+			tr.head th, tr.head td {background-color: #EDEDED; border-bottom: 4px double black;}
+			span.linetitle {font-weight: bold;}
+			div.lineclass {font-style: italic;}
+			.title, .result {width: 80%;}
+			.notes {width: 15%;}
+			h1 {text-align: center;}
+			body {margin: 12px; font-size: 12px;}
+		</style>
+		<style type="text/css" media="print">
+			form {display: none;}
+		</style>
+	</head>
+	<body>
+		<div id="data"/>
+	</body>
+	<script type="text/javascript">
+		function geraScript()
+		{
+			var datas = new Array();
+			var horarios = new Array();
+			var ativs = new Array();
+			var task = new Array();
+			var output = "";
+			//debugger;
+			for (var i = 4; i < spData.length; i = i + 4)
+			{
+				if (spData[i]["content"]["$t"] == "!- ANTIGOS -!")
+					break
+				
+				datas.push(spData[i]["content"]["$t"]);
+				horarios.push(spData[i+1]["content"]["$t"]);
+				ativs.push(spData[i+2]["content"]["$t"]);
+				task.push(spData[i+3]["content"]["$t"]);				
+			}
+
+
+			for (var i = 1; i < horarios.length; i++)
+			{
+				if (task[i] != "000000") // task "000000" eh usada para almoco e horario de sair
+				{
+					output += "function func" + i +"part1(){";
+					output += "console.log('Entrou na func" + i +"part1()');"; // console.log part1
+					output += "document.getElementById('btnAddAlocacao-btnWrap').click();";
+					output += "var cont = document.getElementById('ESFCOMENTARIO');";
+					output += "if(cont != null)func" + i +"part1();";
+					output += "else setTimeout(func" + i +"part2, 1000);";
+					output += "}";
+					output += "function func" + i +"part2(){";
+					output += "console.log('Entrou na func" + i +"part2()');"; // console.log part2
+					output += "var dataIni = document.getElementById('ESFDATA-inputEl');";
+					output += "if(dataIni != null){";
+					output += "dataIni.value = '" + datas[i] + "';";
+					output += "document.getElementById('ESFHORARIOINICIO-inputEl').value = '" + horarios[i] + "';";
+					output += "document.getElementById('ESFHORARIOTERMINO-inputEl').value = '" + horarios[i-1] + "';";
+					output += "document.getElementById('cmp_ESFSOLCOD-inputEl').value = '" + task[i] + "';";
+					output += "document.getElementById('ESFCOMENTARIO').value = '" + ativs[i] + "';";
+					output += "setTimeout(func" + i +"part3, 300);";
+					output += "}";
+					output += "else setTimeout(func" + i +"part2, 300);";
+					output += "}";
+					output += "function func" + i +"part3(){";
+					output += "console.log('Entrou na func" + i +"part3()');"; // console.log part3
+					output += "var btnId = document.getElementById('cmp_ESFSOLCOD-triggerWrap').getElementsByTagName('img')[1].id;";
+					output += "var cont = document.getElementById('cmp_ESFSOLCOD-inputEl');";
+					output += "if(!cont.disabled && cont.value.length < 8)document.getElementById(btnId).click();";
+					output += "if(cont.value.length > 8)func" + i +"part4();";
+					output += "else setTimeout(func" + i +"part3, 1000);";
+					output += "}";
+					output += "function func" + i +"part4(){";
+					output += "console.log('Entrou na func" + i +"part4()');"; // console.log part4
+					output += "var click = document.getElementById('btnConfirm_win-detail-mdlEsforco-btnIconEl');";
+					output += "if(click != null) click.click();";
+					output += "var apagarbtn = document.getElementById('btnConfirm_win-detail-mdlEsforco');";
+					output += "if(apagarbtn != null) apagarbtn.innerHTML = '';";
+					output += "var cont = document.getElementById('ESFDATA-inputEl');";
+					output += "if(cont == null)func" + (i + 1) +"part1();";
+					output += "else setTimeout(func" + i +"part4, 1000);";
+					output += "}";
+				}
+				else
+				{
+					output += "function func" + i +"part1(){";
+					output += "func" + (i + 1) + "part1();";
+					output += "}";
+				}
+				
+				if (i + 1 == horarios.length - 1)
+				{
+					output += "function func" + (i + 1) + "part1(){";
+					output += "window.alert('Terminado!');";
+					output += "console.log('Acabou!');"; // console.log acaba
+					output += "}";
+				}
+			}
+
+			output += "func1part1();";
+
+			//console.log(output);
+
+			document.getElementsByTagName('body')[0].innerHTML = output;
+		}
+	</script>
+</html>
