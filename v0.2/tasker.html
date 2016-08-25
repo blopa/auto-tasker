@@ -90,7 +90,7 @@
 			for (var i = 4; i < spData.length; i = i + 4)
 			{
 				if (spData[i]["content"]["$t"] == "!- ANTIGOS -!")
-					break
+					break;
 				
 				datas.push(spData[i]["content"]["$t"]);
 				horarios.push(spData[i+1]["content"]["$t"]);
@@ -99,7 +99,7 @@
 			}
 
 
-			for (var i = 1; i < horarios.length; i++)
+			for (var i = 0; i < horarios.length; i++)
 			{
 				if (task[i] != "000000") // task "000000" eh usada para almoco e horario de sair
 				{
@@ -116,7 +116,7 @@
 					output += "if(dataIni != null){";
 					output += "dataIni.value = '" + datas[i] + "';";
 					output += "document.getElementById('ESFHORARIOINICIO-inputEl').value = '" + horarios[i] + "';";
-					output += "document.getElementById('ESFHORARIOTERMINO-inputEl').value = '" + horarios[i-1] + "';";
+					output += "document.getElementById('ESFHORARIOTERMINO-inputEl').value = '" + horarios[i+1] + "';";
 					output += "document.getElementById('cmp_ESFSOLCOD-inputEl').value = '" + task[i] + "';";
 					output += "document.getElementById('ESFCOMENTARIO').value = '" + ativs[i] + "';";
 					output += "setTimeout(func" + i +"part3, 300);";
@@ -149,7 +149,7 @@
 					output += "}";
 				}
 				
-				if (i + 1 == horarios.length - 1)
+				if (i + 1 == horarios.length)
 				{
 					output += "function func" + (i + 1) + "part1(){";
 					output += "window.alert('Terminado!');";
@@ -158,7 +158,7 @@
 				}
 			}
 
-			output += "func1part1();";
+			output += "func0part1();";
 
 			//console.log(output);
 
