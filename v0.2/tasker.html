@@ -95,9 +95,10 @@
 		
 		function checkData(data)
 		{
-			var dataHoje = new Date();
-			var dataFormat = dataHoje.toLocaleDateString();
-			var dataParse = new Date(data);
+			var dataParsed = data.split('/'); // quebra a data no formato brasileiro
+			var dataParse = new Date(dataParsed[1] + "/" + dataParsed[0] + "/" + dataParsed[2]); // cria nova data do parse no formato MM/DD/YY
+			var dataHoje = new Date(); // cria nova data de hoje no formato MM/DD/YY
+			//var dataFormat = dataHoje.toLocaleDateString();
 			if (dataParse > dataHoje) return false; // valida se a data eh maior que hoje
 			var matcher = data.match(/(((0[1-9]|[12][0-9]|3[01])([-./])(0[13578]|10|12)([-./])(\d{4}))|(([0][1-9]|[12][0-9]|30)([-./])(0[469]|11)([-./])(\d{4}))|((0[1-9]|1[0-9]|2[0-8])([-./])(02)([-./])(\d{4}))|((29)(\.|-|\/)(02)([-./])([02468][048]00))|((29)([-./])(02)([-./])([13579][26]00))|((29)([-./])(02)([-./])([0-9][0-9][0][48]))|((29)([-./])(02)([-./])([0-9][0-9][2468][048]))|((29)([-./])(02)([-./])([0-9][0-9][13579][26])))/);
 			if (matcher == null) return false; // valida data
@@ -150,40 +151,40 @@
 						output += "function func" + i +"part1(){";
 						output += "console.log('Entrou na func" + i +"part1()');"; // console.log part1
 						output += "document.getElementById('btnAddAlocacao-btnWrap').click();";
-						output += "var cont = document.getElementById('ESFCOMENTARIO');";
-						output += "if(cont != null)func" + i +"part1();";
-						output += "else setTimeout(func" + i +"part2, 1000);";
+						output += "var cont=document.getElementById('ESFCOMENTARIO');";
+						output += "if(cont!=null)func" + i +"part1();";
+						output += "else setTimeout(func" + i +"part2,1000);";
 						output += "}";
 						output += "function func" + i +"part2(){";
 						output += "console.log('Entrou na func" + i +"part2()');"; // console.log part2
-						output += "var dataIni = document.getElementById('ESFDATA-inputEl');";
-						output += "if(dataIni != null){";
-						output += "dataIni.value = '" + datas[i] + "';";
-						output += "document.getElementById('ESFHORARIOINICIO-inputEl').value = '" + horarios[i] + "';";
-						output += "document.getElementById('ESFHORARIOTERMINO-inputEl').value = '" + horarios[i+1] + "';";
-						output += "document.getElementById('cmp_ESFSOLCOD-inputEl').value = '" + task[i] + "';";
-						output += "document.getElementById('ESFCOMENTARIO').value = '" + ativs[i] + "';";
-						output += "setTimeout(func" + i +"part3, 300);";
+						output += "var dataIni=document.getElementById('ESFDATA-inputEl');";
+						output += "if(dataIni!=null){";
+						output += "dataIni.value='" + datas[i] + "';";
+						output += "document.getElementById('ESFHORARIOINICIO-inputEl').value='" + horarios[i] + "';";
+						output += "document.getElementById('ESFHORARIOTERMINO-inputEl').value='" + horarios[i+1] + "';";
+						output += "document.getElementById('cmp_ESFSOLCOD-inputEl').value='" + task[i] + "';";
+						output += "document.getElementById('ESFCOMENTARIO').value='" + ativs[i] + "';";
+						output += "setTimeout(func" + i +"part3,300);";
 						output += "}";
-						output += "else setTimeout(func" + i +"part2, 300);";
+						output += "else setTimeout(func" + i +"part2,300);";
 						output += "}";
 						output += "function func" + i +"part3(){";
 						output += "console.log('Entrou na func" + i +"part3()');"; // console.log part3
-						output += "var btnId = document.getElementById('cmp_ESFSOLCOD-triggerWrap').getElementsByTagName('img')[1].id;";
-						output += "var cont = document.getElementById('cmp_ESFSOLCOD-inputEl');";
-						output += "if(!cont.disabled && cont.value.length < 8)document.getElementById(btnId).click();";
-						output += "if(cont.value.length > 8)func" + i +"part4();";
-						output += "else setTimeout(func" + i +"part3, 1000);";
+						output += "var btnId=document.getElementById('cmp_ESFSOLCOD-triggerWrap').getElementsByTagName('img')[1].id;";
+						output += "var cont=document.getElementById('cmp_ESFSOLCOD-inputEl');";
+						output += "if(!cont.disabled&&cont.value.length<8)document.getElementById(btnId).click();";
+						output += "if(cont.value.length>8)func" + i +"part4();";
+						output += "else setTimeout(func" + i +"part3,1000);";
 						output += "}";
 						output += "function func" + i +"part4(){";
 						output += "console.log('Entrou na func" + i +"part4()');"; // console.log part4
-						output += "var click = document.getElementById('btnConfirm_win-detail-mdlEsforco-btnIconEl');";
-						output += "if(click != null) click.click();";
-						output += "var apagarbtn = document.getElementById('btnConfirm_win-detail-mdlEsforco');";
-						output += "if(apagarbtn != null) apagarbtn.innerHTML = '';";
-						output += "var cont = document.getElementById('ESFDATA-inputEl');";
-						output += "if(cont == null)func" + (i + 1) +"part1();";
-						output += "else setTimeout(func" + i +"part4, 1000);";
+						output += "var click=document.getElementById('btnConfirm_win-detail-mdlEsforco-btnIconEl');";
+						output += "if(click!=null)click.click();";
+						output += "var apagarbtn=document.getElementById('btnConfirm_win-detail-mdlEsforco');";
+						output += "if(apagarbtn!=null)apagarbtn.innerHTML='';";
+						output += "var cont=document.getElementById('ESFDATA-inputEl');";
+						output += "if(cont==null)func" + (i + 1) +"part1();";
+						output += "else setTimeout(func" + i +"part4,1000);";
 						output += "}";
 					}
 					else
