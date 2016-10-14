@@ -5,6 +5,7 @@
 			//debugger;
 		</script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+		<!-- Script que faz o parse dos dados da planilha -->
 		<script type="text/javascript">
 		  var spData = null;
 		  function doData(json) {			  
@@ -59,6 +60,7 @@
 			  geraScript();
 		  });
 		</script>
+		<!-- Coloque aqui a ID da sua planilha do Google Drive -->
 		<script src="https://spreadsheets.google.com/feeds/cells/ID_DA_SUA_PLANILHA/1/public/values?alt=json-in-script&callback=doData"></script>
 		<style type="text/css">
 			table {border-collapse: collapse; width: 50%;}
@@ -79,90 +81,132 @@
 		<div id="data"/>
 	</body>
 	<script type="text/javascript">
-		function geraScript()
+		function checkTime(time)
+		{
+			var matcher = time.match(/^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/);
+			if (matcher == null) return false; // valida horario
+			return true;
+		}
+		
+		function checkData(data)
+		{
+			var dataHoje = new Date();
+			var dataFormat = dataHoje.toLocaleDateString();
+			var dataParse = new Date(data);
+			if (dataParse > dataHoje) return false; // valida se a data eh maior que hoje
+			var matcher = data.match(/(((0[1-9]|[12][0-9]|3[01])([-./])(0[13578]|10|12)([-./])(\d{4}))|(([0][1-9]|[12][0-9]|30)([-./])(0[469]|11)([-./])(\d{4}))|((0[1-9]|1[0-9]|2[0-8])([-./])(02)([-./])(\d{4}))|((29)(\.|-|\/)(02)([-./])([02468][048]00))|((29)([-./])(02)([-./])([13579][26]00))|((29)([-./])(02)([-./])([0-9][0-9][0][48]))|((29)([-./])(02)([-./])([0-9][0-9][2468][048]))|((29)([-./])(02)([-./])([0-9][0-9][13579][26])))/);
+			if (matcher == null) return false; // valida data
+			return true;
+		}
+		
+		function geraScript() // gera script de alocacao
 		{
 			var datas = new Array();
 			var horarios = new Array();
 			var ativs = new Array();
 			var task = new Array();
 			var output = "";
+			var erroData = false;
+			var erroTime = false;
+			var j = 0;
 			//debugger;
 			for (var i = 4; i < spData.length; i = i + 4)
 			{
-				if (spData[i]["content"]["$t"] == "!- ANTIGOS -!")
+				if (spData[i]["content"]["$t"] == "LINHA_DE_CORTE_DO_SCRIPT")
 					break;
 				
 				datas.push(spData[i]["content"]["$t"]);
 				horarios.push(spData[i+1]["content"]["$t"]);
-				ativs.push(spData[i+2]["content"]["$t"]);
-				task.push(spData[i+3]["content"]["$t"]);				
-			}
-
-
-			for (var i = 0; i < horarios.length; i++)
-			{
-				if (task[i] != "000000") // task "000000" eh usada para almoco e horario de sair
+				
+				if (!isNaN(parseInt(spData[i+2]["content"]["$t"])))
 				{
-					output += "function func" + i +"part1(){";
-					output += "console.log('Entrou na func" + i +"part1()');"; // console.log part1
-					output += "document.getElementById('btnAddAlocacao-btnWrap').click();";
-					output += "var cont = document.getElementById('ESFCOMENTARIO');";
-					output += "if(cont != null)func" + i +"part1();";
-					output += "else setTimeout(func" + i +"part2, 1000);";
-					output += "}";
-					output += "function func" + i +"part2(){";
-					output += "console.log('Entrou na func" + i +"part2()');"; // console.log part2
-					output += "var dataIni = document.getElementById('ESFDATA-inputEl');";
-					output += "if(dataIni != null){";
-					output += "dataIni.value = '" + datas[i] + "';";
-					output += "document.getElementById('ESFHORARIOINICIO-inputEl').value = '" + horarios[i] + "';";
-					output += "document.getElementById('ESFHORARIOTERMINO-inputEl').value = '" + horarios[i+1] + "';";
-					output += "document.getElementById('cmp_ESFSOLCOD-inputEl').value = '" + task[i] + "';";
-					output += "document.getElementById('ESFCOMENTARIO').value = '" + ativs[i] + "';";
-					output += "setTimeout(func" + i +"part3, 300);";
-					output += "}";
-					output += "else setTimeout(func" + i +"part2, 300);";
-					output += "}";
-					output += "function func" + i +"part3(){";
-					output += "console.log('Entrou na func" + i +"part3()');"; // console.log part3
-					output += "var btnId = document.getElementById('cmp_ESFSOLCOD-triggerWrap').getElementsByTagName('img')[1].id;";
-					output += "var cont = document.getElementById('cmp_ESFSOLCOD-inputEl');";
-					output += "if(!cont.disabled && cont.value.length < 8)document.getElementById(btnId).click();";
-					output += "if(cont.value.length > 8)func" + i +"part4();";
-					output += "else setTimeout(func" + i +"part3, 1000);";
-					output += "}";
-					output += "function func" + i +"part4(){";
-					output += "console.log('Entrou na func" + i +"part4()');"; // console.log part4
-					output += "var click = document.getElementById('btnConfirm_win-detail-mdlEsforco-btnIconEl');";
-					output += "if(click != null) click.click();";
-					output += "var apagarbtn = document.getElementById('btnConfirm_win-detail-mdlEsforco');";
-					output += "if(apagarbtn != null) apagarbtn.innerHTML = '';";
-					output += "var cont = document.getElementById('ESFDATA-inputEl');";
-					output += "if(cont == null)func" + (i + 1) +"part1();";
-					output += "else setTimeout(func" + i +"part4, 1000);";
-					output += "}";
+					ativs.push("Atividade");
+					i--;
 				}
 				else
-				{
-					output += "function func" + i +"part1(){";
-					output += "func" + (i + 1) + "part1();";
-					output += "}";
-				}
-				
-				if (i + 1 == horarios.length)
-				{
-					output += "function func" + (i + 1) + "part1(){";
-					output += "window.alert('Terminado!');";
-					output += "console.log('Acabou!');"; // console.log acaba
-					output += "}";
-				}
+					ativs.push(spData[i+2]["content"]["$t"]);
+					
+				task.push(spData[i+3]["content"]["$t"]);
+
+				if (!checkData(datas[j])){erroData = true; break;}
+				if (!checkTime(horarios[j])){erroTime = true; break;}
+				j++;
 			}
 
-			output += "func0part1();";
+			if (!erroData && !erroTime)
+			{
+				for (var i = 0; i < horarios.length; i++)
+				{
+					//debugger;
+					if (parseInt(task[i]) != 0) // task "000000" (ou 0 int) eh usada para almoco e horario de sair
+					{
+						output += "function func" + i +"part1(){";
+						output += "console.log('Entrou na func" + i +"part1()');"; // console.log part1
+						output += "document.getElementById('btnAddAlocacao-btnWrap').click();";
+						output += "var cont = document.getElementById('ESFCOMENTARIO');";
+						output += "if(cont != null)func" + i +"part1();";
+						output += "else setTimeout(func" + i +"part2, 1000);";
+						output += "}";
+						output += "function func" + i +"part2(){";
+						output += "console.log('Entrou na func" + i +"part2()');"; // console.log part2
+						output += "var dataIni = document.getElementById('ESFDATA-inputEl');";
+						output += "if(dataIni != null){";
+						output += "dataIni.value = '" + datas[i] + "';";
+						output += "document.getElementById('ESFHORARIOINICIO-inputEl').value = '" + horarios[i] + "';";
+						output += "document.getElementById('ESFHORARIOTERMINO-inputEl').value = '" + horarios[i+1] + "';";
+						output += "document.getElementById('cmp_ESFSOLCOD-inputEl').value = '" + task[i] + "';";
+						output += "document.getElementById('ESFCOMENTARIO').value = '" + ativs[i] + "';";
+						output += "setTimeout(func" + i +"part3, 300);";
+						output += "}";
+						output += "else setTimeout(func" + i +"part2, 300);";
+						output += "}";
+						output += "function func" + i +"part3(){";
+						output += "console.log('Entrou na func" + i +"part3()');"; // console.log part3
+						output += "var btnId = document.getElementById('cmp_ESFSOLCOD-triggerWrap').getElementsByTagName('img')[1].id;";
+						output += "var cont = document.getElementById('cmp_ESFSOLCOD-inputEl');";
+						output += "if(!cont.disabled && cont.value.length < 8)document.getElementById(btnId).click();";
+						output += "if(cont.value.length > 8)func" + i +"part4();";
+						output += "else setTimeout(func" + i +"part3, 1000);";
+						output += "}";
+						output += "function func" + i +"part4(){";
+						output += "console.log('Entrou na func" + i +"part4()');"; // console.log part4
+						output += "var click = document.getElementById('btnConfirm_win-detail-mdlEsforco-btnIconEl');";
+						output += "if(click != null) click.click();";
+						output += "var apagarbtn = document.getElementById('btnConfirm_win-detail-mdlEsforco');";
+						output += "if(apagarbtn != null) apagarbtn.innerHTML = '';";
+						output += "var cont = document.getElementById('ESFDATA-inputEl');";
+						output += "if(cont == null)func" + (i + 1) +"part1();";
+						output += "else setTimeout(func" + i +"part4, 1000);";
+						output += "}";
+					}
+					else
+					{
+						output += "function func" + i +"part1(){";
+						output += "func" + (i + 1) + "part1();";
+						output += "}";
+					}
+					
+					if (i + 1 == horarios.length)
+					{
+						output += "function func" + (i + 1) + "part1(){";
+						output += "window.alert('Terminado!');";
+						output += "console.log('Acabou!');"; // console.log acaba
+						output += "}";
+					}
+				}
 
-			//console.log(output);
+				output += "func0part1();";
 
-			document.getElementsByTagName('body')[0].innerHTML = output;
+				//console.log(output);
+
+				document.getElementsByTagName('body')[0].innerHTML = output;
+			}
+			else
+			{				
+				if (erroData) alert("Erro na data!");
+				if (erroTime) alert("Erro no horario!");
+				document.getElementsByTagName('body')[0].innerHTML = "Erro na planilha!";
+			}
 		}
 	</script>
 </html>

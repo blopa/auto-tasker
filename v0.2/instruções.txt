@@ -12,7 +12,6 @@ Coluna Atividade: Coloque o código do Tasker para a atividade
 
 Obs.: O código do Tasker "000000" é ignorado pelo script, e deve ser utilizado para atividades que não serão alocadas no Tasker, como saidas da empresa (sair pra almoçar ou ir pra casa).
 
-As atividades tem que ser cadastrada na planilha de baixo pra cima, ou seja, os primeiros horários devem aparecer mais em cima da planilha, e ir descendo os horários mais tardios.
+As atividades tem que ser cadastrada na planilha de cima pra baixo, ou seja, os primeiros horários devem aparecer mais em cima da planilha, e ir descendo os horários mais tardios.
 
-
-Tudo que for adicionado embaixo da célula "!- ANTIGOS -!" será ignorado. Deixa em cima dela apenas os horários que ainda não foram alocados. O script não faz case de error, então caso tente adicionar um horário que já foi alocado, o script vai falhar.
+Tudo que for adicionado embaixo da célula "LINHA_DE_CORTE_DO_SCRIPT" será ignorado. Deixe em cima dela apenas os horários que ainda não foram alocados. O script não faz case de error, então caso tente adicionar um horário que já foi alocado, o script vai falhar.
