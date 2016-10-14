@@ -81,6 +81,11 @@
 		<div id="data"/>
 	</body>
 	<script type="text/javascript">
+		function checkTask(task)
+		{
+			return !isNaN(parseInt(task));
+		}
+		
 		function checkTime(time)
 		{
 			var matcher = time.match(/^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/);
@@ -108,11 +113,12 @@
 			var output = "";
 			var erroData = false;
 			var erroTime = false;
+			var erroTask = false;
 			var j = 0;
 			//debugger;
 			for (var i = 4; i < spData.length; i = i + 4)
 			{
-				if (spData[i]["content"]["$t"] == "LINHA_DE_CORTE_DO_SCRIPT")
+				if (spData[i]["content"]["$t"].trim() == "LINHA_DE_CORTE_DO_SCRIPT")
 					break;
 				
 				datas.push(spData[i]["content"]["$t"]);
@@ -130,6 +136,7 @@
 
 				if (!checkData(datas[j])){erroData = true; break;}
 				if (!checkTime(horarios[j])){erroTime = true; break;}
+				if (!checkTask(task[j])){erroTask = true; break;}
 				j++;
 			}
 
