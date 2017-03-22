@@ -131,7 +131,7 @@
 					i--;
 				}
 				else
-					ativs.push(spData[i+2]["content"]["$t"]);
+					ativs.push(spData[i+2]["content"]["$t"].replace(/(?:\r\n|\r|\n)/g, '\\n'));
 					
 				task.push(spData[i+3]["content"]["$t"]);
 
